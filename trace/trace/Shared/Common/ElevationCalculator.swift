@@ -11,8 +11,9 @@ import CoreLocation
 /// 3. **最小阈值（hysteresis）**：只有当平滑后的高度变化超过 `minStep` 时
 ///    才更新参考点，避免在阈值附近反复触发。
 ///
-/// 既被 `WorkoutRecorder` 在录制时实时调用（GPS 回退路径），也被
-/// `WorkoutDetailView` 在显示历史记录时一次性重算，让旧数据也能受益。
+/// 在录制时被 `WorkoutRecorder` 实时调用 —— 仅作为气压计不可用时的 GPS 回退路径。
+/// 详情页直接展示存进 `Workout.elevationGain` 的值，不再重算（气压计的高精度结果
+/// 不该被 GPS 海拔覆盖）。
 struct ElevationCalculator {
     var maxVerticalAccuracy: Double = 10
     var windowSize: Int = 5
@@ -48,16 +49,5 @@ struct ElevationCalculator {
             lastSmoothed = smoothed
         }
         return elevationGain
-    }
-
-    /// 一次性对一组样本重算爬升（用于历史详情页显示）。
-    static func recompute(from samples: [RouteSample]) -> Double {
-        let sorted = samples.sorted { $0.timestamp < $1.timestamp }
-        var calc = ElevationCalculator()
-        for s in sorted {
-            // 历史 sample 没存 verticalAccuracy，按"通过"处理；窗口和阈值会兜底
-            calc.ingest(altitude: s.altitude, verticalAccuracy: 0)
-        }
-        return calc.elevationGain
     }
 }

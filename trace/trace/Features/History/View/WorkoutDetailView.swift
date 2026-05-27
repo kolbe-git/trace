@@ -20,11 +20,6 @@ struct WorkoutDetailView: View {
     private var sortedSplits: [Split] {
         (workout.splits ?? []).sorted { $0.index < $1.index }
     }
-    /// 展示用的累计爬升：有 GPS 轨迹时基于 samples 重算，让历史里"裸累加"
-    /// 出来的虚高数据也能修正；否则回落到 workout 里存的值。
-    private var displayedElevationGain: Double {
-        samples.count > 1 ? ElevationCalculator.recompute(from: samples) : workout.elevationGain
-    }
 
     var body: some View {
         List {
@@ -68,7 +63,7 @@ struct WorkoutDetailView: View {
             LabeledContent("卡路里", value: String(format: "%.0f kcal", workout.calories))
             if workout.activityType.usesGPS {
                 // 户外活动一律展示，平地跑会是 0 m，避免用户疑惑"字段哪去了"
-                LabeledContent("累计爬升", value: String(format: "%.0f m", displayedElevationGain))
+                LabeledContent("累计爬升", value: String(format: "%.0f m", workout.elevationGain))
             }
             if workout.averageHeartRate > 0 {
                 LabeledContent("平均心率", value: String(format: "%.0f bpm", workout.averageHeartRate))

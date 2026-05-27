@@ -3,13 +3,35 @@ import AVFoundation
 
 /// 运动语音播报：开始 / 每公里 / 结束时用中文 TTS 播报。
 ///
-/// 用 .playback + .voicePrompt + duckOthers，运动中（App 因后台定位保持存活）即可播报；
-/// 锁屏后台播报如不稳定，再给 target 加 UIBackgroundModes = audio。
+/// 锁屏 / 后台也要发声，依赖两件事：
+/// 1. Info.plist 的 UIBackgroundModes 含 `audio`
+/// 2. 会话开始时把 AVAudioSession 激活为 .playback + .voicePrompt + .duckOthers，
+///    会话结束时再 deactivate；中途的每条播报不再反复 setCategory/setActive。
 final class AudioCoach {
     private let synthesizer = AVSpeechSynthesizer()
+    private var sessionActive = false
+
+    /// 会话开始时调用：一次性配置并激活播放型音频会话，让后续 TTS 在锁屏/后台也能出声。
+    func prepare() {
+        guard !sessionActive else { return }
+        let session = AVAudioSession.sharedInstance()
+        // .duckOthers 与 .mixWithOthers 语义冲突，这里只保留 ducking：
+        // 播报时压低音乐，播完音乐自动恢复。
+        try? session.setCategory(.playback, mode: .voicePrompt, options: [.duckOthers])
+        try? session.setActive(true, options: [])
+        sessionActive = true
+    }
+
+    /// 会话结束时调用：让出音频焦点，恢复其他 App 的正常音量。
+    func deactivate() {
+        guard sessionActive else { return }
+        sessionActive = false
+        let session = AVAudioSession.sharedInstance()
+        try? session.setActive(false, options: [.notifyOthersOnDeactivation])
+    }
 
     func announce(_ text: String) {
-        activateSession()
+        prepare()       // 防御性：万一上层忘了调 prepare 也能播
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: "zh-CN")
         synthesizer.speak(utterance)
@@ -50,11 +72,5 @@ final class AudioCoach {
             text += "，心率 \(Int(heartRate))"
         }
         announce(text)
-    }
-
-    private func activateSession() {
-        let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback, mode: .voicePrompt, options: [.duckOthers, .mixWithOthers])
-        try? session.setActive(true)
     }
 }

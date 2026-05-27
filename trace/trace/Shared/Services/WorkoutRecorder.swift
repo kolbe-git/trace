@@ -95,7 +95,10 @@ final class WorkoutRecorder {
             pedometer?.start()
         }
         health?.startHeartRateUpdates()
-        if voiceEnabled { coach?.announce("开始\(activityType.title)") }
+        if voiceEnabled {
+            coach?.prepare()    // 先激活音频会话，锁屏/后台才能出声
+            coach?.announce("开始\(activityType.title)")
+        }
         startTimer()
     }
 
@@ -118,6 +121,7 @@ final class WorkoutRecorder {
             startAltimeterIfPossible()
         }
         health?.startHeartRateUpdates()
+        if voiceEnabled { coach?.prepare() }   // 暂停可能让 session 失活，恢复时重新激活
         startTimer()
     }
 
@@ -151,6 +155,7 @@ final class WorkoutRecorder {
         if voiceEnabled {
             coach?.announce(String(format: "运动结束，共 %.2f 公里，用时约 %d 分钟",
                                    distance / 1000, Int(elapsed / 60)))
+            coach?.deactivate()    // 让出音频焦点，恢复其他 App 音量
         }
         return workout
     }
