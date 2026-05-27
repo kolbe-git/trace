@@ -1,0 +1,66 @@
+# ---------- macOS ----------
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# ---------- Xcode ----------
+# User-specific
+xcuserdata/
+*.xcuserstate
+*.xcuserdatad/
+*.xcscmblueprint
+*.xccheckout
+
+# Build artifacts
+build/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# ---------- Swift Package Manager ----------
+.build/
+.swiftpm/
+Packages/
+Package.pins
+Package.resolved
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+# ---------- CocoaPods (not used here, future-proofing) ----------
+Pods/
+
+# ---------- Carthage (not used here, future-proofing) ----------
+Carthage/Build/
+Carthage/Checkouts
+
+# ---------- Fastlane ----------
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# ---------- Signing & secrets ----------
+# Local xcconfig holds Team ID — copy Local.xcconfig.example to start.
+# Pattern is intentionally name-only so it matches at any depth.
+Local.xcconfig
+*.p12
+*.mobileprovision
+*.cer
+
+# ---------- Claude Code ----------
+# Shared settings.json is committed; per-user overrides stay local.
+.claude/settings.local.json
+
+# ---------- Editors / IDE ----------
+.vscode/
+.idea/
+*.swp
+*.swo

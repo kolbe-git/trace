@@ -1,0 +1,11 @@
+// Project-level xcconfig — committed.
+//
+// Pulls in Local.xcconfig for per-developer signing settings (Team ID).
+// The `?` makes the include optional: if Local.xcconfig is missing, the
+// build still proceeds (you'll just need to set DEVELOPMENT_TEAM in Xcode
+// → Signing & Capabilities manually).
+//
+// To set up locally:
+//   cp Config/Local.xcconfig.example Config/Local.xcconfig
+//   # then edit Config/Local.xcconfig and fill in your Apple Developer Team ID
+#include? "Local.xcconfig"

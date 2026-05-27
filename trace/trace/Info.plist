@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>记录运动轨迹、距离与配速需要使用你的位置。</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>在后台持续记录运动轨迹需要使用你的位置。</string>
+	<key>NSMotionUsageDescription</key>
+	<string>室内跑步通过计步估算距离需要访问运动与健身数据。</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>读取心率与体重，用于运动中显示并更准确地估算卡路里。</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>把你的运动记录（含轨迹、距离、卡路里、心率）写入"健康"App。</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>remote-notification</string>
+	</array>
+</dict>
+</plist>
