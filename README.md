@@ -1,3 +1,5 @@
+> **Language**: **English** · [简体中文](README.zh-CN.md)
+
 # trace
 
 > A personal running & fitness tracker for iOS — minimal, single-user, iCloud-synced.
