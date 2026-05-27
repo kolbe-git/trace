@@ -36,6 +36,11 @@
 - Apple 健康：读取心率与体重，写入运动、轨迹、能量
 - iCloud（CloudKit）多设备同步
 
+**本地化**
+- 🇨🇳 中国大陆地图坐标系适配（WGS-84 → GCJ-02）：iOS MapKit 在大陆底图使用
+  GCJ-02 火星坐标，原始 GPS 是 WGS-84，不转换会整体偏移数百米。
+  存储层保留 WGS-84，只在喂给 MapKit 时转换；境外自动跳过。
+
 完整功能规划见 [`docs/ROADMAP.md`](docs/ROADMAP.md)。
 
 ## 技术栈

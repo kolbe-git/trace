@@ -37,6 +37,12 @@ no ads, no analytics SDKs. Just you and your runs.
 - Apple Health: read heart rate & weight, write workouts + routes + energy
 - iCloud (CloudKit) sync across devices
 
+**Localization**
+- 🇨🇳 Mainland China map coordinate fix (WGS-84 → GCJ-02): GPS coordinates
+  are stored as raw WGS-84 but transparently transformed to GCJ-02 before
+  being drawn on MapKit, so routes and markers align with the Chinese
+  basemap. Out-of-region coordinates pass through unchanged.
+
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full feature plan and phasing.
 
 ## Tech stack

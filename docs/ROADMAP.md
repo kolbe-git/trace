@@ -15,11 +15,14 @@
 - [x] 实时数据面板：时长、距离、当前配速（骑行显示速度）、心率；卡路里在结束时算
 - [x] 暂停 / 继续 / 结束，结束后保存为一条 Workout（含 samples / splits / 卡路里）
 - [x] 防误触：结束需二次确认（先暂停，再点结束弹确认框）
+- [x] 爬升估算：优先气压计（CMAltimeter / AltimeterManager），GPS 高度兜底
+- [x] GPS 高度滑动窗口平滑 + 滞后过滤（ElevationCalculator），修正高估的爬升
 
 ### 2. 历史记录 History
 - [x] 运动列表（按时间倒序，显示类型/距离/日期）
 - [x] 详情页：地图轨迹（MapKit）+ 汇总 + 分段配速 (splits)
 - [x] 详情页补充：每公里配速柱状图 + 海拔曲线（Swift Charts）
+- [x] 详情页打开时用新平滑算法回算历史爬升数据
 - [x] 删除记录
 - [x] 编辑备注
 
@@ -57,6 +60,14 @@
 - [ ] 天气记录：保存运动时的天气（WeatherKit）—— 需开 WeatherKit 能力（同 HealthKit 那样注册到 App ID）
 - [ ] Live Activity / 灵动岛：锁屏实时显示运动数据 —— **需在 Xcode 新建 Widget Extension target**
 - [ ] 主屏 Widget：本周距离 / 最近一次运动 —— **需在 Xcode 新建 Widget Extension target**
+
+## 横切：地图本地化 Map Localization
+
+- [x] 中国大陆地图坐标系适配（WGS-84 → GCJ-02）：MapKit 在大陆使用 GCJ-02 火星坐标，
+  原始 GPS 是 WGS-84，画轨迹/标记不转换会整体偏移数百米。存储层保留 WGS-84，
+  仅在喂给 MapKit 时转换；境外自动跳过。详见 `RouteMapView.swift` 的 `ChinaCoordinate`。
+
+---
 
 ## Phase 3 — 进阶（按需）
 
