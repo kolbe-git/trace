@@ -54,7 +54,8 @@
 
 ## Phase 2 — 体验增强
 
-- [x] 语音播报 AudioCoach：开始 / 每公里（配速+心率）/ 结束中文播报；「我的」可开关（@AppStorage）
+- [x] 语音播报 AudioCoach：开始 / 每公里（配速+心率）/ 结束中文播报；「我的」可开关（@AppStorage）；
+  锁屏/后台可发声，优选 premium/enhanced 女声音色，播报时压低其它音频、播完即恢复（per-utterance ducking）
 - [x] 目标 Goals：周/月 距离或次数目标 + 进度环（Gauge）+ 新建/删除
 - [x] 成就 / 里程碑：累计里程、连续打卡（streak）—— 统计页「成就」区
 - [ ] 天气记录：保存运动时的天气（WeatherKit）—— 需开 WeatherKit 能力（同 HealthKit 那样注册到 App ID）
