@@ -6,7 +6,7 @@
 
 **A running tracker that belongs to you, and only you**
 
-No account · No social feed · No ads · Your data stays yours
+No sign-up required · No social feed · No ads · Your data stays yours
 
 </div>
 
@@ -44,12 +44,20 @@ recording**:
 | Pain point | trace's answer |
 | --- | --- |
 | Data locked in, lost on switch | Stored in **your own private iCloud database**, and written back to Apple Health in full — your data is never held hostage |
-| Social distraction | **Strictly single-user**: no accounts, feeds, friends, leaderboards, or challenges |
+| Social distraction | **Single-user by default, no sign-up**: no feeds, friends, leaderboards, or challenges — works out of the box |
 | Ads everywhere | **Zero ads, zero third-party analytics SDKs** — nothing is collected or reported |
 | Useless offline | GPS / barometer / pedometer all run **locally** — record with no signal, sync when you're home |
 
 > trace is a personal-use project, open-sourced for anyone bothered by the same things.
 > It doesn't try to be everything — just to **do recording well**.
+
+**On switching devices and accounts:** moving to a new iPhone just means signing in with
+the same Apple ID — all your records sync down automatically, **no import/export needed**.
+That's exactly why trace uses a private iCloud database rather than local-only storage. The
+real guarantee that your data is yours is **data export (GPX / CSV, planned)** — portable,
+permanent, dependency-free. trace needs no account today and forces none; but **if a genuine
+need for cross-platform use or account binding emerges, an _optional_ sign-in (Sign in with
+Apple first) will be added** — as a nice-to-have, never a gate.
 
 ## ✨ Features
 
