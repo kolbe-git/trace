@@ -21,6 +21,9 @@ struct WorkoutDetailView: View {
         (workout.splits ?? []).sorted { $0.index < $1.index }
     }
 
+    @State private var gpxURL: URL?
+    @State private var sampleCSVURL: URL?
+
     var body: some View {
         List {
             if coordinates.count > 1 {
@@ -45,6 +48,38 @@ struct WorkoutDetailView: View {
         }
         .navigationTitle(workout.activityType.title)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if gpxURL != nil || sampleCSVURL != nil {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        if let gpxURL {
+                            ShareLink(item: gpxURL) {
+                                Label("导出 GPX 轨迹", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
+                            }
+                        }
+                        if let sampleCSVURL {
+                            ShareLink(item: sampleCSVURL) {
+                                Label("导出明细 CSV", systemImage: "tablecells")
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                }
+            }
+        }
+        .task(id: workout.persistentModelID) { generateExports() }
+    }
+
+    /// 生成可分享的导出文件。没有轨迹点（如室内跑）则不提供单条导出，
+    /// 这类记录可在「我的 → 数据导出」里随汇总 CSV 一起带走。
+    private func generateExports() {
+        guard !samples.isEmpty else {
+            gpxURL = nil; sampleCSVURL = nil
+            return
+        }
+        gpxURL = try? WorkoutExporter.gpxFile(for: workout)
+        sampleCSVURL = try? WorkoutExporter.sampleCSVFile(for: workout)
     }
 
     // MARK: - 汇总

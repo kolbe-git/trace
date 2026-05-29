@@ -57,6 +57,14 @@ struct ProfileView: View {
                 Toggle("语音播报", isOn: $voiceEnabled)
             }
 
+            Section("数据") {
+                NavigationLink {
+                    ExportView()
+                } label: {
+                    Label("数据导出", systemImage: "square.and.arrow.up")
+                }
+            }
+
             Section {
                 LabeledContent("卡路里估算", value: "依据体重 · MET 模型")
             } footer: {

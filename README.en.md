@@ -54,7 +54,7 @@ recording**:
 **On switching devices and accounts:** moving to a new iPhone just means signing in with
 the same Apple ID — all your records sync down automatically, **no import/export needed**.
 That's exactly why trace uses a private iCloud database rather than local-only storage. The
-real guarantee that your data is yours is **data export (GPX / CSV, planned)** — portable,
+real guarantee that your data is yours is **data export (GPX / CSV)** — portable,
 permanent, dependency-free. trace needs no account today and forces none; but **if a genuine
 need for cross-platform use or account binding emerges, an _optional_ sign-in (Sign in with
 Apple first) will be added** — as a nice-to-have, never a gate.
@@ -83,6 +83,12 @@ Apple first) will be added** — as a nice-to-have, never a gate.
 **🎯 Goals**
 - Weekly or monthly distance / count goals with progress gauges
 
+**📤 Data export**
+- Per-workout from the detail screen: GPX route (with elevation + heart rate) / per-point CSV
+- Bulk from Profile → Data export: a summary CSV of all workouts + all GPX files
+- GPX uses standard WGS-84 (importable into Strava / Garmin etc.); CSV uses SI
+  units + ISO8601 timestamps for archiving and re-import — **your data always travels with you**
+
 **🔗 Integrations**
 - Apple Health: read heart rate & weight, write workouts / routes / energy / distance
 - iCloud (CloudKit) private-database sync across devices
@@ -104,6 +110,9 @@ Apple first) will be added** — as a nice-to-have, never a gate.
 - Chinese voice coach (improved voice + smart music duck-and-restore)
 - HealthKit read/write, iCloud multi-device sync
 - Mainland China map coordinate localization
+- **Data export (GPX / CSV)** — export a single workout's route, or bulk-export
+  everything from Profile; GPX uses standard WGS-84, importable into other apps.
+  Because "take your data with you" is trace's whole point
 
 ### 🚧 Planned
 
@@ -114,7 +123,6 @@ Apple first) will be added** — as a nice-to-have, never a gate.
 - Standalone Apple Watch recording app
 - Training plans: interval / long-run plans with reminders
 - In-run photos pinned to a point on the route
-- **Data export (GPX / CSV)** — because "take your data with you" is trace's whole point
 
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the phased plan and
 [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md) for the requirements list.

@@ -32,7 +32,8 @@ trace/                         <- repo root (this file lives here)
         ├── App/               <- traceApp (entry + ModelContainer), RootView (5-tab TabView), OnboardingView
         ├── Shared/            <- cross-business layer
         │   ├── Models/        <- SwiftData @Model: Workout, RouteSample, Split, Goal, UserProfile, ActivityType
-        │   ├── Services/      <- LocationManager, HealthKitManager, PedometerManager, AudioCoach, WorkoutRecorder
+        │   ├── Services/      <- LocationManager, HealthKitManager, PedometerManager, AltimeterManager,
+        │   │                     AudioCoach, WorkoutRecorder, WorkoutExporter (GPX/CSV 导出)
         │   ├── Components/    <- reusable SwiftUI views (RouteMapView)
         │   └── Common/        <- UnitPreference, MapStylePreference, Formatters, CalorieCalculator
         └── Features/          <- one package per business, each split MVC
