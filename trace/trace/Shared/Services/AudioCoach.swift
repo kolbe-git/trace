@@ -5,36 +5,120 @@ import AVFoundation
 ///
 /// 锁屏 / 后台也要发声，依赖两件事：
 /// 1. Info.plist 的 UIBackgroundModes 含 `audio`
-/// 2. 会话开始时把 AVAudioSession 激活为 .playback + .voicePrompt + .duckOthers，
-///    会话结束时再 deactivate；中途的每条播报不再反复 setCategory/setActive。
-final class AudioCoach {
+/// 2. 每条播报时把 AVAudioSession 激活为 .playback + .voicePrompt + .duckOthers，
+///    播报结束（synthesizer 队列清空）后再 deactivate(.notifyOthersOnDeactivation)。
+///
+/// **关键：ducking 只在播报期间生效。** 早期版本在会话开始时就 setActive 并全程
+/// 保持，导致音乐从头到尾被压低、播完也不恢复。现在改为"播报前激活、播完释放"，
+/// 其它 App 的音乐只在每段播报的几秒内被压低，播完立即恢复原音量。
+final class AudioCoach: NSObject, AVSpeechSynthesizerDelegate {
     private let synthesizer = AVSpeechSynthesizer()
-    private var sessionActive = false
 
-    /// 会话开始时调用：一次性配置并激活播放型音频会话，让后续 TTS 在锁屏/后台也能出声。
-    func prepare() {
-        guard !sessionActive else { return }
-        let session = AVAudioSession.sharedInstance()
-        // .duckOthers 与 .mixWithOthers 语义冲突，这里只保留 ducking：
-        // 播报时压低音乐，播完音乐自动恢复。
-        try? session.setCategory(.playback, mode: .voicePrompt, options: [.duckOthers])
-        try? session.setActive(true, options: [])
-        sessionActive = true
+    /// 队列里尚未播完的 utterance 数；归零时才释放音频会话恢复音乐音量。
+    private var pendingUtterances = 0
+    private var categoryConfigured = false
+
+    /// 选中的中文音色（懒加载并缓存）：优先 premium > enhanced，优先女声，音色更甜。
+    private lazy var preferredVoice: AVSpeechSynthesisVoice? = Self.bestChineseVoice()
+
+    override init() {
+        super.init()
+        synthesizer.delegate = self
     }
 
-    /// 会话结束时调用：让出音频焦点，恢复其他 App 的正常音量。
+    /// 会话开始时调用：只配置一次 category，不在此激活（激活留到每条播报时）。
+    func prepare() {
+        configureCategoryIfNeeded()
+    }
+
+    /// 会话结束时调用：保险地停掉残留播报并释放音频会话。
     func deactivate() {
-        guard sessionActive else { return }
-        sessionActive = false
-        let session = AVAudioSession.sharedInstance()
-        try? session.setActive(false, options: [.notifyOthersOnDeactivation])
+        synthesizer.stopSpeaking(at: .immediate)
+        pendingUtterances = 0
+        deactivateSession()
     }
 
     func announce(_ text: String) {
-        prepare()       // 防御性：万一上层忘了调 prepare 也能播
+        configureCategoryIfNeeded()
+        // 播报前激活会话并压低其它音频；didFinish/didCancel 里再释放。
+        activateSession()
+        pendingUtterances += 1
+
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "zh-CN")
+        utterance.voice = preferredVoice ?? AVSpeechSynthesisVoice(language: "zh-CN")
+        // 略慢、略高的音调让中文播报更清晰、更柔和。
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.94
+        utterance.pitchMultiplier = 1.08
+        utterance.postUtteranceDelay = 0.1
         synthesizer.speak(utterance)
+    }
+
+    // MARK: - 音频会话
+
+    private func configureCategoryIfNeeded() {
+        guard !categoryConfigured else { return }
+        // .duckOthers 与 .mixWithOthers 语义冲突，这里只保留 ducking。
+        try? AVAudioSession.sharedInstance()
+            .setCategory(.playback, mode: .voicePrompt, options: [.duckOthers])
+        categoryConfigured = true
+    }
+
+    private func activateSession() {
+        try? AVAudioSession.sharedInstance().setActive(true, options: [])
+    }
+
+    private func deactivateSession() {
+        // notifyOthersOnDeactivation 让被压低的音乐立刻恢复原音量。
+        try? AVAudioSession.sharedInstance()
+            .setActive(false, options: [.notifyOthersOnDeactivation])
+    }
+
+    // MARK: - AVSpeechSynthesizerDelegate
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
+                           didFinish utterance: AVSpeechUtterance) {
+        finishOne()
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
+                           didCancel utterance: AVSpeechUtterance) {
+        finishOne()
+    }
+
+    /// 一条播报结束：只有队列彻底清空时才释放会话，避免连续播报间音乐反复忽大忽小。
+    private func finishOne() {
+        pendingUtterances = max(0, pendingUtterances - 1)
+        if pendingUtterances == 0 {
+            deactivateSession()
+        }
+    }
+
+    // MARK: - 音色挑选
+
+    /// 挑一个最甜美的中文音色：优先质量 premium > enhanced > default，
+    /// 同质量下优先女声（gender == .female）。premium/enhanced 需用户在
+    /// 「设置 → 辅助功能 → 朗读内容 → 声音」里下载，未下载时自动回退到默认音色。
+    private static func bestChineseVoice() -> AVSpeechSynthesisVoice? {
+        let chinese = AVSpeechSynthesisVoice.speechVoices().filter {
+            $0.language.hasPrefix("zh-CN") || $0.language.hasPrefix("zh-Hans")
+        }
+        guard !chinese.isEmpty else { return nil }
+
+        func qualityScore(_ q: AVSpeechSynthesisVoiceQuality) -> Int {
+            switch q {
+            case .premium:  return 3
+            case .enhanced: return 2
+            default:        return 1
+            }
+        }
+        return chinese.max { a, b in
+            let qa = qualityScore(a.quality), qb = qualityScore(b.quality)
+            if qa != qb { return qa < qb }
+            // 同质量：女声优先
+            let fa = a.gender == .female ? 1 : 0
+            let fb = b.gender == .female ? 1 : 0
+            return fa < fb
+        }
     }
 
     /// 每公里（或英里）的语音播报：累计距离、本段配速/速度、当前心率。

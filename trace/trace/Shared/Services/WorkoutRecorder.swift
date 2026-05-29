@@ -48,7 +48,7 @@ final class WorkoutRecorder {
     // 爬升：优先气压计；若不可用则用 GPS 海拔的滤波算法。
     private var usesBarometer = false
     private var lastBaroAltitude: Double?
-    private let baroMinStep: Double = 0.3
+    private let baroMinStep: Double = 1.0
     private var gpsElevation = ElevationCalculator()
 
     // 分段（每 1km 一段）
@@ -230,18 +230,26 @@ final class WorkoutRecorder {
         altimeter?.stop()
     }
 
-    /// 气压计相对海拔：差分后过最小阈值才更新参考点并累加正向部分。
-    /// hysteresis：未过阈值时保留旧参考点，防止在阈值附近反复触发。
+    /// 气压计相对海拔，采用**死区滞回（deadband hysteresis）**累计爬升。
+    ///
+    /// 关键点：锚点 `lastBaroAltitude` 在死区内**保持不动**，只有相对锚点的累计
+    /// 变化超过 `baroMinStep` 才提交。这样平地上 ±0.x 米的气压噪声（开关门、风、
+    /// 体感动作）不会被反复计入。早期版本对每个 |delta|≥0.3 都移动锚点，使
+    /// "+0.4 累加 → −0.4 移锚不加 → +0.4 又累加"的噪声不断叠加成虚高（实测 6m）。
     private func ingestBaro(_ relativeAltitude: Double) {
         guard state == .recording else { return }
-        guard let last = lastBaroAltitude else {
+        guard let anchor = lastBaroAltitude else {
             lastBaroAltitude = relativeAltitude
             return
         }
-        let delta = relativeAltitude - last
-        guard abs(delta) >= baroMinStep else { return }
-        if delta > 0 { elevationGain += delta }
-        lastBaroAltitude = relativeAltitude
+        let delta = relativeAltitude - anchor
+        if delta >= baroMinStep {
+            elevationGain += delta          // 上坡：累加并把锚点抬到当前高度
+            lastBaroAltitude = relativeAltitude
+        } else if delta <= -baroMinStep {
+            lastBaroAltitude = relativeAltitude   // 下坡：只移锚点，不累加
+        }
+        // |delta| < baroMinStep：死区内，锚点不动、忽略噪声
     }
 
     /// 室内：计步器给的是累计距离，直接覆盖
