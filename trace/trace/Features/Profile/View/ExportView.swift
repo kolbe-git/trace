@@ -30,6 +30,26 @@ struct ExportView: View {
                 )
             } else {
                 Section {
+                    if !gpxURLs.isEmpty {
+                        ShareLink(items: gpxURLs) {
+                            Label("导出全部轨迹 GPX（\(gpxURLs.count) 条）", systemImage: "map")
+                        }
+                    } else if gpxCount > 0 {
+                        Label(isBuilding ? "正在生成轨迹 GPX…" : "准备轨迹 GPX…", systemImage: "map")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Label("暂无含 GPS 轨迹的运动", systemImage: "map")
+                            .foregroundStyle(.secondary)
+                    }
+                } header: {
+                    Text("完整轨迹（GPX）")
+                } footer: {
+                    Text("含逐点经纬度、海拔与心率的完整路线，标准 WGS-84 坐标，"
+                         + "可导入 Strava / Garmin 等。单条运动也可在其详情页右上角分享。"
+                         + "室内跑无 GPS 轨迹，不在此列。")
+                }
+
+                Section {
                     if let summaryURL {
                         ShareLink(item: summaryURL) {
                             Label("导出汇总 CSV（\(workouts.count) 条）", systemImage: "tablecells")
@@ -38,20 +58,11 @@ struct ExportView: View {
                         Label("正在准备汇总 CSV…", systemImage: "tablecells")
                             .foregroundStyle(.secondary)
                     }
-
-                    if !gpxURLs.isEmpty {
-                        ShareLink(items: gpxURLs) {
-                            Label("导出全部 GPX（\(gpxURLs.count) 条轨迹）", systemImage: "map")
-                        }
-                    } else if gpxCount > 0 {
-                        Label(isBuilding ? "正在生成 GPX…" : "准备 GPX…", systemImage: "map")
-                            .foregroundStyle(.secondary)
-                    }
                 } header: {
-                    Text("导出")
+                    Text("概览表格（CSV）")
                 } footer: {
-                    Text("CSV 用米/秒/秒每公里等原始单位与 ISO8601 时间，便于归档与再导入；"
-                         + "GPX 为标准 WGS-84 坐标，可导入其它运动 App。室内跑无轨迹，只在汇总 CSV 中。")
+                    Text("每条运动一行的概览（类型/距离/时长/配速…），**不含轨迹点**，"
+                         + "适合在表格软件里统计或归档。用米/秒等原始单位与 ISO8601 时间，便于再导入。")
                 }
             }
         }
