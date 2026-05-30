@@ -14,8 +14,6 @@ import AVFoundation
 final class AudioCoach: NSObject, AVSpeechSynthesizerDelegate {
     private let synthesizer = AVSpeechSynthesizer()
 
-    /// 队列里尚未播完的 utterance 数；归零时才释放音频会话恢复音乐音量。
-    private var pendingUtterances = 0
     private var categoryConfigured = false
 
     /// 选中的中文音色（懒加载并缓存）：优先 premium > enhanced，优先女声，音色更甜。
@@ -34,7 +32,6 @@ final class AudioCoach: NSObject, AVSpeechSynthesizerDelegate {
     /// 会话结束时调用：保险地停掉残留播报并释放音频会话。
     func deactivate() {
         synthesizer.stopSpeaking(at: .immediate)
-        pendingUtterances = 0
         deactivateSession()
     }
 
@@ -42,7 +39,6 @@ final class AudioCoach: NSObject, AVSpeechSynthesizerDelegate {
         configureCategoryIfNeeded()
         // 播报前激活会话并压低其它音频；didFinish/didCancel 里再释放。
         activateSession()
-        pendingUtterances += 1
 
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = preferredVoice ?? AVSpeechSynthesisVoice(language: "zh-CN")
@@ -77,19 +73,27 @@ final class AudioCoach: NSObject, AVSpeechSynthesizerDelegate {
 
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
                            didFinish utterance: AVSpeechUtterance) {
-        finishOne()
+        scheduleDeactivationIfIdle()
     }
 
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
                            didCancel utterance: AVSpeechUtterance) {
-        finishOne()
+        scheduleDeactivationIfIdle()
     }
 
-    /// 一条播报结束：只有队列彻底清空时才释放会话，避免连续播报间音乐反复忽大忽小。
-    private func finishOne() {
-        pendingUtterances = max(0, pendingUtterances - 1)
-        if pendingUtterances == 0 {
-            deactivateSession()
+    /// 一段播报结束后释放音频会话，让被压低的音乐恢复原音量。
+    ///
+    /// 两个关键点，缺一就会"永久压低"或"音乐忽大忽小"：
+    /// 1. 以 `synthesizer.isSpeaking` 为准而不是自己数 utterance——队列里还有没播完的
+    ///    就先不释放，避免连续播报之间音乐反复恢复又压低。
+    /// 2. **延后一拍再 deactivate**。didFinish 触发时音频硬件往往还没真正收尾
+    ///    （还有 postUtteranceDelay），此刻同步调 setActive(false) 会抛 isBusy 错误，
+    ///    被 try? 吞掉后会话其实没释放，音乐就被永久压低。延迟到硬件空闲再释放才稳。
+    private func scheduleDeactivationIfIdle() {
+        guard !synthesizer.isSpeaking else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+            guard let self, !self.synthesizer.isSpeaking else { return }
+            self.deactivateSession()
         }
     }
 
