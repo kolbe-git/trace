@@ -59,7 +59,10 @@
 - [x] 目标 Goals：周/月 距离或次数目标 + 进度环（Gauge）+ 新建/删除
 - [x] 成就 / 里程碑：累计里程、连续打卡（streak）—— 统计页「成就」区
 - [ ] 天气记录：保存运动时的天气（WeatherKit）—— 需开 WeatherKit 能力（同 HealthKit 那样注册到 App ID）
-- [ ] Live Activity / 灵动岛：锁屏实时显示运动数据 —— **需在 Xcode 新建 Widget Extension target**
+- [x] Live Activity / 灵动岛：锁屏实时显示运动数据 —— 已建 `TraceWidgets` 扩展 target，
+  `TraceLiveActivity` 提供锁屏卡片 + 灵动岛 expanded/compact/minimal 三态；时长用
+  `effectiveStartDate` 在锁屏侧自走秒，距离/配速/心率由 `WorkoutRecorder` 每 2s 节流推送，
+  暂停冻结、结束即移除。共享类型 `TraceActivityAttributes` 在 app/扩展两个 target 同时编译。
 - [ ] 主屏 Widget：本周距离 / 最近一次运动 —— **需在 Xcode 新建 Widget Extension target**
 
 ## 横切：地图本地化 Map Localization

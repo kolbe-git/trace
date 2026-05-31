@@ -6,10 +6,33 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		84F100112FC1B8940038AAAF /* TraceActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F1000D2FC1B8940038AAAF /* TraceActivityAttributes.swift */; };
+		84F100122FC1B8940038AAAF /* TraceActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F1000D2FC1B8940038AAAF /* TraceActivityAttributes.swift */; };
+		84F100132FC1B8940038AAAF /* TraceWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F1000E2FC1B8940038AAAF /* TraceWidgetsBundle.swift */; };
+		84F100142FC1B8940038AAAF /* TraceLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F1000F2FC1B8940038AAAF /* TraceLiveActivity.swift */; };
+		84F100022FC1B8940038AAAF /* TraceWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 84F100042FC1B8940038AAAF /* TraceWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		84CFG00012FC1B8940038AAAF /* Project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = "<group>"; };
 		84D109D62FC1B8940038AAAF /* trace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = trace.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		84F1000D2FC1B8940038AAAF /* TraceActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceActivityAttributes.swift; sourceTree = "<group>"; };
+		84F1000E2FC1B8940038AAAF /* TraceWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceWidgetsBundle.swift; sourceTree = "<group>"; };
+		84F1000F2FC1B8940038AAAF /* TraceLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraceLiveActivity.swift; sourceTree = "<group>"; };
+		84F100102FC1B8940038AAAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84F100042FC1B8940038AAAF /* TraceWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TraceWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXContainerItemProxy section */
+		84F1000C2FC1B8940038AAAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84D109CE2FC1B8940038AAAF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84F100032FC1B8940038AAAF;
+			remoteInfo = TraceWidgets;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		84D109E82FC1C0FF0038AAAF /* Exceptions for "trace" folder in "trace" target */ = {
@@ -32,8 +55,29 @@
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		84F100012FC1B8940038AAAF /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				84F100022FC1B8940038AAAF /* TraceWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		84D109D32FC1B8940038AAAF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84F100062FC1B8940038AAAF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -48,8 +92,28 @@
 			children = (
 				84CFG00022FC1B8940038AAAF /* Config */,
 				84D109D82FC1B8940038AAAF /* trace */,
+				84F100162FC1B8940038AAAF /* Shared */,
+				84F100152FC1B8940038AAAF /* TraceWidgets */,
 				84D109D72FC1B8940038AAAF /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		84F100162FC1B8940038AAAF /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				84F1000D2FC1B8940038AAAF /* TraceActivityAttributes.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		84F100152FC1B8940038AAAF /* TraceWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				84F1000E2FC1B8940038AAAF /* TraceWidgetsBundle.swift */,
+				84F1000F2FC1B8940038AAAF /* TraceLiveActivity.swift */,
+				84F100102FC1B8940038AAAF /* Info.plist */,
+			);
+			path = TraceWidgets;
 			sourceTree = "<group>";
 		};
 		84CFG00022FC1B8940038AAAF /* Config */ = {
@@ -64,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				84D109D62FC1B8940038AAAF /* trace.app */,
+				84F100042FC1B8940038AAAF /* TraceWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -78,10 +143,12 @@
 				84D109D22FC1B8940038AAAF /* Sources */,
 				84D109D32FC1B8940038AAAF /* Frameworks */,
 				84D109D42FC1B8940038AAAF /* Resources */,
+				84F100012FC1B8940038AAAF /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				84F1000B2FC1B8940038AAAF /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				84D109D82FC1B8940038AAAF /* trace */,
@@ -92,6 +159,25 @@
 			productName = trace;
 			productReference = 84D109D62FC1B8940038AAAF /* trace.app */;
 			productType = "com.apple.product-type.application";
+		};
+		84F100032FC1B8940038AAAF /* TraceWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84F100082FC1B8940038AAAF /* Build configuration list for PBXNativeTarget "TraceWidgets" */;
+			buildPhases = (
+				84F100052FC1B8940038AAAF /* Sources */,
+				84F100062FC1B8940038AAAF /* Frameworks */,
+				84F100072FC1B8940038AAAF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TraceWidgets;
+			packageProductDependencies = (
+			);
+			productName = TraceWidgets;
+			productReference = 84F100042FC1B8940038AAAF /* TraceWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -104,6 +190,9 @@
 				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					84D109D52FC1B8940038AAAF = {
+						CreatedOnToolsVersion = 26.1;
+					};
+					84F100032FC1B8940038AAAF = {
 						CreatedOnToolsVersion = 26.1;
 					};
 				};
@@ -123,12 +212,20 @@
 			projectRoot = "";
 			targets = (
 				84D109D52FC1B8940038AAAF /* trace */,
+				84F100032FC1B8940038AAAF /* TraceWidgets */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		84D109D42FC1B8940038AAAF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84F100072FC1B8940038AAAF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -142,10 +239,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84F100112FC1B8940038AAAF /* TraceActivityAttributes.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84F100052FC1B8940038AAAF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84F100132FC1B8940038AAAF /* TraceWidgetsBundle.swift in Sources */,
+				84F100142FC1B8940038AAAF /* TraceLiveActivity.swift in Sources */,
+				84F100122FC1B8940038AAAF /* TraceActivityAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		84F1000B2FC1B8940038AAAF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 84F100032FC1B8940038AAAF /* TraceWidgets */;
+			targetProxy = 84F1000C2FC1B8940038AAAF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		84D109E12FC1B8940038AAAF /* Debug */ = {
@@ -335,6 +451,64 @@
 			};
 			name = Release;
 		};
+		84F100092FC1B8940038AAAF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TraceWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "trace 运动";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.kolbe.app.trace.TraceWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		84F1000A2FC1B8940038AAAF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TraceWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "trace 运动";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.kolbe.app.trace.TraceWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -352,6 +526,15 @@
 			buildConfigurations = (
 				84D109E42FC1B8940038AAAF /* Debug */,
 				84D109E52FC1B8940038AAAF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84F100082FC1B8940038AAAF /* Build configuration list for PBXNativeTarget "TraceWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84F100092FC1B8940038AAAF /* Debug */,
+				84F1000A2FC1B8940038AAAF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

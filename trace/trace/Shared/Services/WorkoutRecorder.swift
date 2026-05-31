@@ -36,6 +36,10 @@ final class WorkoutRecorder {
     private let weightKG: Double
     private let unit: UnitPreference
 
+    // 灵动岛 / 锁屏 Live Activity（尽力而为，失败不影响记录）
+    private let live = LiveActivityController()
+    private var lastLiveUpdate = Date.distantPast
+
     private var timer: Timer?
     private var sessionStart = Date()
     private var accumulated: TimeInterval = 0
@@ -99,6 +103,13 @@ final class WorkoutRecorder {
             coach?.prepare()    // 先激活音频会话，锁屏/后台才能出声
             coach?.announce("开始\(activityType.title)")
         }
+        live.start(
+            attributes: TraceActivityAttributes(
+                activityTitle: activityType.title,
+                activitySymbol: activityType.symbol
+            ),
+            state: liveState()
+        )
         startTimer()
     }
 
@@ -110,6 +121,7 @@ final class WorkoutRecorder {
         location.stop()
         stopAltimeter()
         health?.stopHeartRateUpdates()
+        live.update(liveState())   // 立刻把锁屏切到「已暂停」并冻结时长
     }
 
     func resume() {
@@ -122,6 +134,7 @@ final class WorkoutRecorder {
         }
         health?.startHeartRateUpdates()
         if voiceEnabled { coach?.prepare() }   // 暂停可能让 session 失活，恢复时重新激活
+        live.update(liveState())   // 恢复自走秒计时
         startTimer()
     }
 
@@ -136,6 +149,7 @@ final class WorkoutRecorder {
         stopAltimeter()
         health?.stopHeartRateUpdates()
         state = .idle
+        live.end(liveState())   // 从锁屏/灵动岛移除
 
         let workout = Workout(activityType: activityType, startDate: sessionStart)
         workout.endDate = .now
@@ -175,6 +189,28 @@ final class WorkoutRecorder {
             elapsed = accumulated + Date().timeIntervalSince(segmentStart)
         }
         if let health, health.liveHeartRate > 0 { currentHeartRate = health.liveHeartRate }
+        // 节流推送 Live Activity（时长在锁屏侧自走秒，这里只为刷新距离/配速/心率）
+        if Date().timeIntervalSince(lastLiveUpdate) >= 2 {
+            lastLiveUpdate = .now
+            live.update(liveState())
+        }
+    }
+
+    /// 把当前实时指标快照成 Live Activity 的 ContentState。
+    /// 展示文本统一走 Formatters，避免把单位偏好搬进扩展。
+    private func liveState() -> TraceActivityAttributes.ContentState {
+        let prefersSpeed = activityType.prefersSpeed
+        return TraceActivityAttributes.ContentState(
+            effectiveStartDate: Date().addingTimeInterval(-elapsed),
+            isPaused: state != .recording,
+            elapsedText: Formatters.duration(elapsed),
+            distanceText: Formatters.distance(distance, unit: unit),
+            primaryValue: prefersSpeed
+                ? Formatters.speed(metersPerSecond: currentSpeed, unit: unit)
+                : Formatters.pace(secondsPerKm: currentPace, unit: unit),
+            primaryLabel: prefersSpeed ? "速度" : "配速",
+            heartRateText: currentHeartRate > 0 ? String(format: "%.0f", currentHeartRate) : "--"
+        )
     }
 
     /// 把当前运动段折算进 accumulated 并清空 segmentStart

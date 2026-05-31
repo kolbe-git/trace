@@ -12,6 +12,8 @@
 	<string>读取心率与体重，用于运动中显示并更准确地估算卡路里。</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>把你的运动记录（含轨迹、距离、卡路里、心率）写入"健康"App。</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
